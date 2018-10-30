@@ -1,0 +1,31 @@
+
+version: '3'
+
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:management
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - amqp-bridge
+
+  spring-instance:
+    container_name: spring-instance
+    image: spring-instance
+    restart: always
+    build: .
+    ports:
+      - "3000:3000"
+    links:
+      - rabbitmq
+    networks:
+      - amqp-bridge
+    environment:
+      SPRING_RABBITMQ_HOST: rabbitmq
+
+networks:
+    amqp-bridge:
+        driver: bridge
